@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:typed_data';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
 class BleDeviceInteractor {
@@ -46,6 +46,14 @@ class BleDeviceInteractor {
       _logMessage('Start discovering services for: $deviceId');
       final result = await _bleDiscoverServices(deviceId);
       _logMessage('Discovering services finished');
+      final writeCharcteristic = await writeCharacterisiticWithoutResponse(
+          QualifiedCharacteristic(
+              characteristicId:
+                  Uuid.parse("19b10001-e8f2-537e-4f6c-d104768a1214"),
+              serviceId: Uuid.parse("00000000-0000-0000-0000-000000000000"),
+              deviceId: deviceId),
+          [0x01, 0x00]);
+      print("writeCharcteristic");
       return result;
     } on Exception catch (e) {
       _logMessage('Error occured when discovering services: $e');
@@ -57,6 +65,13 @@ class BleDeviceInteractor {
       QualifiedCharacteristic characteristic) async {
     try {
       final result = await _readCharacteristic(characteristic);
+      print("result");
+      print(result);
+      final arr = Uint8List.fromList(result);
+      final str = String.fromCharCodes(arr);
+      print(str);
+      print("characteristic");
+      print(characteristic);
 
       _logMessage('Read ${characteristic.characteristicId}: value = $result');
       return result;

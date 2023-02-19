@@ -54,6 +54,26 @@ class _DeviceInteractorState extends State<DeviceInteractor> {
   Stream<List<int>>? subscriptionStream;
 
   @override
+  void initState() {
+    super.initState();
+    _connectToDevice();
+  }
+
+  Future<void> _connectToDevice() async {
+    // Connect to the BLE device here, and then call the writeCharacteristicWithResponse method
+    // after the connection is established.
+    final services = widget.deviceInteractor.discoverServices(widget.deviceId);
+    print(services);
+    widget.deviceInteractor.writeCharacterisiticWithResponse(
+        QualifiedCharacteristic(
+            characteristicId:
+                Uuid.parse("19b10001-e8f2-537e-4f6c-d104768a1215"),
+            serviceId: Uuid.parse("19b10000-e8f2-537e-4f6c-d104768a1214"),
+            deviceId: widget.deviceId),
+        [79, 70, 70]);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -87,6 +107,39 @@ class _DeviceInteractorState extends State<DeviceInteractor> {
                 Navigator.pop(context);
               },
               child: const Text('disconnect'),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     widget.deviceInteractor.readCharacteristic(
+            //       QualifiedCharacteristic(
+            //           characteristicId:
+            //               Uuid.parse("19b10001-e8f2-537e-4f6c-d104768a1214"),
+            //           serviceId:
+            //               Uuid.parse("00000000-0000-0000-0000-000000000000"),
+            //           deviceId: widget.deviceId),
+            //     );
+            //   },
+            //   child: const Text('read caracteristic'),
+            // ),
+            const SizedBox(
+              width: 20,
+            ),
+            // crear un boton para leer los servicios
+            ElevatedButton(
+              onPressed: () {
+                widget.deviceInteractor.writeCharacterisiticWithResponse(
+                    QualifiedCharacteristic(
+                        characteristicId:
+                            Uuid.parse("19b10001-e8f2-537e-4f6c-d104768a1215"),
+                        serviceId:
+                            Uuid.parse("19b10000-e8f2-537e-4f6c-d104768a1214"),
+                        deviceId: widget.deviceId),
+                    [79, 70, 70]);
+              },
+              child: const Text('read services'),
             ),
           ],
         ),
